@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+alphacraft_legacy/
+data/
+paper/
+ppt/
+
+CraftingTable.ipynb
+etf_strategy_base.ipynb
+etf_strategy_Rev1d.ipynb
+structure.txt
+testbed.ipynb
+test_creon.ipynb
+test_data_preprocess.ipynb
+db_connection_test.ipynb
