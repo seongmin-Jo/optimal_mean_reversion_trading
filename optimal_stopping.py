@@ -2,7 +2,8 @@ from ou_process import *
 
 import numpy as np
 from scipy.integrate import quad
-from typing import Callable
+from scipy.optimize import minimize
+from typing import Callable, Tuple
 
 import matplotlib.pyplot as plt
 
@@ -76,36 +77,64 @@ def function_G_prime(mu: np.float32,
     return G_prime
 
 
-def expected_discounted_factor(mu: np.float32,
-                                sigma: np.float32,
-                                theta: np.float32,
-                                r: np.float32,
-                                x, 
-                                kappa):
+def function_h(x, c):
+    """Reward Function"""
+    def h(x, c):
+        return x-c
+    return h
+
+
+def test_expected_discounted_factor(x: np.float32, a: np.float32, b: np.float32, F, G):
     """
-    E[e^(-r*tauk)]
+    test_expected_discounted_factor(a_star, b_star, a_star, F, G) # (1, 0)
+    test_expected_discounted_factor(b_star, a_star, b_star, F, G) # (0, 1)
     """
+    if x <= a:
+        exp_a = F(x) / F(a)
+        exp_b = 0  # As it's certain that tau_a < tau_b in this case
+    elif x >= b:
+        exp_a = 0  # As it's certain that tau_a > tau_b in this case
+        exp_b = G(x) / G(b)
+    else:
+        exp_a = F(x) / F(a)
+        exp_b = G(x) / G(b)
+    return exp_a, exp_b
 
-    F = function_F(mu=mu, sigma=sigma, theta=theta, r=r)
-    G = function_G(mu=mu, sigma=sigma, theta=theta, r=r)
 
-    if x > kappa or x == kappa:
-        return G(x)/G(kappa)
+def expected_discounted_reward(params: Tuple[np.float32, np.float32], x: np.float32, h, F, G) -> np.float32:
+    a, b = params
+    
+    if x <= a:
+        exp_a = F(x) / F(a)
+        exp_b = 0  # As it's certain that tau_a < tau_b in this case
+    elif x >= b:
+        exp_a = 0  # As it's certain that tau_a > tau_b in this case
+        exp_b = G(x) / G(b)
+    else:
+        exp_a = F(x) / F(a)
+        exp_b = G(x) / G(b)
 
-    elif x < kappa:
-        return F(x)/F(kappa)
+    return -(h(a) * exp_a + h(b) * exp_b)
 
 
-def psi(mu: np.float32,
-        sigma: np.float32,
-        theta: np.float32,
-        r: np.float32,
-        x):
+def find_optimal_interval(F,
+                          G,
+                          r: np.float32,
+                          c: np.float32,
+                          x: np.float32) -> Tuple[np.float32, np.float32]:
+    
+    h = lambda z: z - c
 
-    F = function_F(mu=mu, sigma=sigma, theta=theta, r=r)
-    G = function_G(mu=mu, sigma=sigma, theta=theta, r=r)
-    return F(x)/G(x)
-
+    # Optimize for a and b jointly
+    initial_guess = [x - 0.05, x + 0.05]  # Replace with more educated guesses if available
+    # initial_guess = [0.4690968492625811, 0.6004618825146063] # np.min(xt), np.max(xt)
+    bounds = [(-np.inf, np.inf), (-np.inf, np.inf)]  # Replace with actual bounds if available
+    
+    result = minimize(expected_discounted_reward, initial_guess, args=(x, h, F, G), bounds=bounds)
+    
+    candidate_a, candidate_b = result.x
+    
+    return candidate_a, candidate_b
 
 def function_V(b : np.float32,
                c : np.float32, 
@@ -240,16 +269,19 @@ if __name__ == "__main__":
     xt = compose_xt(gld, gdx, 1, B_star_gld_gdx)
     theta, mu, sigma = get_optimal_ou_params(xt, dt=1/252)
 
+    xt = compose_xt(gld, gdx, 1, B_star_gld_gdx)
     x = xt[0]
-    r = 0.01
-    c = 0.00015
-    c_prime = 0.00265 # 매도 : 0.00015 + 세금 : 0.0025
+    theta, mu, sigma = get_optimal_ou_params(xt, dt=1/252)
+    r = 0.05
+    c = 0.05
 
     F = function_F(mu=mu, sigma=sigma, theta=theta, r=r)
     F_prime = function_F_prime(mu=mu, sigma=sigma, theta=theta, r=r)
     G = function_G(mu=mu, sigma=sigma, theta=theta, r=r)
     G_prime = function_G_prime(mu=mu, sigma=sigma, theta=theta, r=r)
 
+    candidate_a, candidate_b = find_optimal_interval(F, G, r, c, x)
+    print("Optimal Interval [a, b]:", "[{}, {}]".format(candidate_a, candidate_b))
 
     # plot V(x) against b
     plt.figure(figsize=(15, 5))
@@ -262,6 +294,7 @@ if __name__ == "__main__":
     plt.axhline(y=x, color='k', linestyle='--')
 
     domain = np.linspace(0.4, 1, num=100, endpoint=True)
+    # domain = np.linspace(candidate_a, candidate_b, num=100, endpoint=True)
 
     l_V = plt.plot(domain, [function_V(b=b, c=c, F=F)(x) for b in domain], color='r', label="V(x)")
 
