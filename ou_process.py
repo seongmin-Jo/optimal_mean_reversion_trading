@@ -119,10 +119,6 @@ if __name__ == "__main__":
 
     print('Numbner of data points in file = ', gld.size)
 
-    #  The book uses only 200 points, so we'll trim our data down.
-    #  I wrote this so you can easily adjust which 200 points are used.
-    #  Obviously, don't go beound the length of the raw data.
-
     M = 3
     gld = gld[M:M + 200]
     gdx = gdx[M:M + 200]
