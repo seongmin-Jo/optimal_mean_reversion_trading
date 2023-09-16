@@ -9,31 +9,35 @@
 
 from __future__ import print_function
 
+
 class Event(object):
     """
-    Event is base class providing an interface for all subsequent
-    (inherited) events, that will trigger further events in the
-    trading infrastructure.
+    Event is base class providing an interface for all subsequent 
+    (inherited) events, that will trigger further events in the 
+    trading infrastructure.   
     """
     pass
 
 
 class MarketEvent(Event):
     """
-    Handles the event of recieving a new market update in corresponding bars
+    Handles the event of receiving a new market update with 
+    corresponding bars.
     """
+
     def __init__(self):
         """
-        Initiates the MarketEvent
+        Initialises the MarketEvent.
         """
         self.type = 'MARKET'
 
 
-class SingleEvent(Event):
+class SignalEvent(Event):
     """
     Handles the event of sending a Signal from a Strategy object.
     This is received by a Portfolio object and acted upon.
     """
+    
     def __init__(self, strategy_id, symbol, datetime, signal_type, strength):
         """
         Initialises the SignalEvent.
@@ -52,6 +56,7 @@ class SingleEvent(Event):
         self.datetime = datetime
         self.signal_type = signal_type
         self.strength = strength
+
 
 class OrderEvent(Event):
     """
@@ -90,6 +95,7 @@ class OrderEvent(Event):
             "Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % 
             (self.symbol, self.order_type, self.quantity, self.direction)
         )
+
 
 class FillEvent(Event):
     """

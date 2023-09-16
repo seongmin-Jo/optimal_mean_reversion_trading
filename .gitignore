@@ -1,5 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/latex,jupyternotebooks,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=latex,jupyternotebooks,python
+.DS_Store
+*.DS_Store
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
