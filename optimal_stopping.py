@@ -180,6 +180,24 @@ def function_J(d: np.float32,
     return J
 
 
+"""
+def b_star_finder(x):
+    return F(x) - (x - c) * F_prime(x)
+
+def find_b_star(x_init):
+    root_result = root_scalar(b_star_finder, bracket=[0,1], x0=x_init)
+    b_star = root_result.root
+    return b_star, root_result.converged
+
+def d_star_finder(x):
+    return (G_prime(x) * (V(x) - x - c)) - (G(x) * (V(x) - 1))
+
+def find_d_star(x_init, b):
+    root_result = root_scalar(d_star_finder, bracket=[0,b], x0=x_init)
+    d_star = root_result.root
+    return d_star, root_result.converged
+"""
+
 def find_b_star(x: np.float32,
                 c: np.float32,
                 F: Callable[np.float32, np.float32],
