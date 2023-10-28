@@ -140,6 +140,7 @@ def get_B_star(table):
     return float(table.iloc[np.where(table.mle==np.max(table.mle))].B.values)
 
 
+"""
 if __name__ == "__main__":
     # Same example 
     GDX = pd.read_csv('data/GDX_historical.csv')
@@ -185,4 +186,106 @@ if __name__ == "__main__":
     theta_star2, mu_star2, sigma_star2, mle2 = adjust_mu_maximizing_avg_log_likelihood(x2t, theta2, sigma2)
     
     print('theta_star, mu_star, sigma_star, mle: ', theta_star, mu_star, sigma_star, mle)
-    print('theta_star, mu_star, sigma_star, mle: ', theta_star2, mu_star2, sigma_star2, mle2)
+    print('theta_star, mu_star, sigma_star, mle: ', theta_star2, mu_star2, sigma_star2, mle2) 
+"""
+
+
+import math
+from math import sqrt, exp, log  # exp(n) == e^n, log(n) == ln(n)
+import scipy.optimize as so
+import numpy as np
+
+def __compute_log_likelihood(params, *args):
+    '''
+    Compute the average Log Likelihood, this function will by minimized by scipy.
+    Find in (2.2) in linked paper
+
+    returns: the average log likelihood from given parameters
+    '''
+    # functions passed into scipy's minimize() needs accept one parameter, a tuple of
+    #   of values that we adjust to minimize the value we return.
+    #   optionally, *args can be passed, which are values we don't change, but still want
+    #   to use in our function (e.g. the measured heights in our sample or the value Pi)
+
+    theta, mu, sigma = params
+    X, dt = args
+    n = len(X)
+
+    sigma_tilde_squared = sigma ** 2 * (1 - exp(-2 * mu * dt)) / (2 * mu)
+    summation_term = 0
+
+    for i in range(1, len(X)):
+        summation_term += (X[i] - X[i - 1] * exp(-mu * dt) - theta * (1 - exp(-mu * dt))) ** 2
+
+    summation_term = -summation_term / (2 * n * sigma_tilde_squared)
+
+    log_likelihood = (-log(2 * math.pi) / 2) + (-log(sqrt(sigma_tilde_squared))) + summation_term
+
+    return -log_likelihood
+    # since we want to maximize this total log likelihood, we need to minimize the
+    #   negation of the this value (scipy doesn't support maximize)
+
+
+def estimate_coefficients_MLE(X, dt, tol=1e-4):
+    '''
+    Estimates Ornstein-Uhlenbeck coefficients (θ, µ, σ) of the given array
+    using the Maximum Likelihood Estimation method
+
+    input: X - array-like time series data to be fit as an OU process
+           dt - time increment (1 / days(start date - end date))
+           tol - tolerance for determination (smaller tolerance means higher precision)
+    returns: θ, µ, σ, Average Log Likelihood
+    '''
+
+    bounds = ((None, None), (1e-5, None), (1e-5, None))  # theta ∈ ℝ, mu > 0, sigma > 0
+                                                           # we need 1e-10 b/c scipy bounds are inclusive of 0, 
+                                                           # and sigma = 0 causes division by 0 error
+    theta_init = np.mean(X)
+    initial_guess = (theta_init, 100, 100)  # initial guesses for theta, mu, sigma
+    result = so.minimize(__compute_log_likelihood, initial_guess, args=(X, dt), bounds=bounds)
+    theta, mu, sigma = result.x 
+    max_log_likelihood = -result.fun  # undo negation from __compute_log_likelihood
+    # .x gets the optimized parameters, .fun gets the optimized value
+    return theta, mu, sigma, max_log_likelihood
+
+def compute_portfolio_values(ts_A, ts_B, alloc_B):
+    '''
+    Compute the portfolio values over time when holding $1 of stock A 
+    and -$alloc_B of stock B
+    
+    input: ts_A - time-series of price data of stock A,
+           ts_B - time-series of price data of stock B
+    outputs: Portfolio values of holding $1 of stock A and -$alloc_B of stock B
+    '''
+    
+    ts_A = ts_A.copy()  # defensive programming
+    ts_B = ts_B.copy()
+    
+    ts_A = ts_A / ts_A[0]
+    ts_B = ts_B / ts_B[0]
+    return ts_A - alloc_B * ts_B
+
+def arg_max_B_alloc(ts_A, ts_B, dt):
+    '''
+    Finds the $ allocation ratio to stock B to maximize the log likelihood
+    from the fit of portfolio values to an OU process
+
+    input: ts_A - time-series of price data of stock A,
+           ts_B - time-series of price data of stock B
+           dt - time increment (1 / days(start date - end date))
+    returns: θ*, µ*, σ*, B*
+    '''
+    
+    theta = mu = sigma = alloc_B = 0
+    max_log_likelihood = 0
+
+    def compute_coefficients(x):
+        portfolio_values = compute_portfolio_values(ts_A, ts_B, x)
+        return estimate_coefficients_MLE(portfolio_values, dt)
+    
+    vectorized = np.vectorize(compute_coefficients)
+    linspace = np.linspace(.01, 1, 100)
+    res = vectorized(linspace)
+    index = res[3].argmax()
+    
+    return res[0][index], res[1][index], res[2][index], linspace[index]

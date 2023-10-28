@@ -1,0 +1,84 @@
+﻿SYMBOL,NAME,TAGS
+305720,KODEX 2차전지산업,"technology,manufacturing"
+91180,KODEX 자동차,"technology,manufacturing"
+400970,TIGER Fn메타버스,technology
+228800,TIGER 여행레저,retail
+161510,ARIRANG 고배당주,high-dividend
+150460,TIGER 중국소비테마,"china,retail"
+228810,TIGER 미디어컨텐츠,retail
+139220,TIGER 200 건설,utilities
+117680,KODEX 철강,commodity
+174350,TIGER 로우볼,volatility
+421320,ARIRANG iSelect 우주항공&UAM,technology
+244670,KODEX 밸류Plus,value
+417450,KBSTAR 글로벌수소경제Indxx,"global,energy"
+395150,KODEX Fn웹툰&드라마,retail
+322150,KINDEX 스마트하이베타,factor-model
+337120,KODEX Fn멀티팩터,factor-model
+147970,TIGER 모멘텀,momentum
+412560,TIGER KRX BBIG K-뉴딜레버리지,"leverage,utilities"
+243880,TIGER 200IT레버리지,"leverage,technology"
+153130,KODEX 단기채권,bond
+148070,KOSEF 국고채10년,bond
+332620,ARIRANG 미국장기우량회사채,"US,bond"
+182490,TIGER 단기선진하이일드(합성 H),"global,high-yield"
+292770,KODEX 국채선물3년인버스,"inverse,bond"
+123310,TIGER 인버스,inverse
+292340,마이티 200커버드콜ATM레버리지,"option,leverage"
+166400,TIGER 200커버드콜5%OTM,option
+271050,KODEX WTI원유선물인버스(H),"commodity,inverse"
+132030,KODEX 골드선물(H),commodity
+415920,ARIRANG 글로벌희토류전략자원기업MV,"global,commodity"
+138910,KODEX 구리선물(H),commodity
+316300,KINDEX 싱가포르리츠,"singapore,real-estate"
+352560,KODEX 다우존스미국리츠(H),"US,real-estate"
+250780,TIGER 코스닥150선물인버스,inverse
+295020,KBSTAR 국채선물10년인버스,"inverse,bond"
+217780,TIGER 차이나CSI300인버스(합성),"china,inverse"
+225030,TIGER 미국S&P500선물인버스(H),"US,inverse"
+373530,ARIRANG 신흥국MSCI인버스(합성 H),"emerging-market,inverse"
+280940,KODEX 골드선물인버스(H),"commodity,inverse"
+SVIX,-1x Short VIX Futures ETF,"inverse,volatility"
+DRV,Direxion Daily Real Estate Bear 3X Shares,"real-estate,inverse"
+SRS,ProShares UltraShort Real Estate,"real-estate,inverse"
+SQQQ,ProShares UltraPro Short QQQ,inverse
+PSQ,ProShares Short QQQ,inverse
+RWM,ProShares Short Russell2000,inverse
+HDGE,AdvisorShares Ranger Equity Bear ETF,inverse
+FNGD,MicroSectors FANG+™ Index -3X Inverse Leveraged ETN,"inverse,technology"
+NRGD,MicroSectors U.S. Big Oil Index -3X Inverse Leveraged ETN,inverse
+JDST,Direxion Daily Energy Bear 2X Shares,"inverse,energy"
+EDZ,Direxion Daily MSCI Emerging Markets Bear 3X Shares,"inverse,emerging-market"
+EMTY,ProShares Decline of the Retail Store ETF,"inverse,retail"
+SMDD,ProShares UltraPro Short MidCap400,"inverse,size"
+EWV,ProShares UltraShort MSCI Japan,"inverse,japan"
+SDP,ProShares UltraShort Utilities,"inverse,utilities"
+SSG,Proshares Ultrashort Semiconductors,"inverse,technology"
+SCO,ProShares UltraShort Bloomberg Crude Oil,"inverse,commodity"
+KOLD,ProShares UltraShort Bloomberg Natural Gas,"inverse,commodity"
+GLL,ProShares UltraShort Gold,"inverse,commodity"
+ZSL,ProShares UltraShort Silver,"inverse,commodity"
+TBT,ProShares UltraShort 20+ Year Treasury,"inverse,bond"
+SJB,ProShares Short High Yield,"inverse,high-yield"
+TBX,ProShares Short 7-10 Year Treasury,"inverse,bond"
+CORN,Teucrium Corn Fund,commodity
+WEAT,Teucrium Wheat Fund,commodity
+JJA,iPath Series B Bloomberg Agriculture Subindex Total Return ETN,commodity
+USO,United States Oil Fund LP,commodity
+DBE,Invesco DB Energy Fund,energy
+UNL,United States 12 Month Natural Gas Fund LP,energy
+BKLN,Invesco Senior Loan ETF,bond
+DFEN,Direxion Daily Aerospace & Defense Bull 3X Shares,technology
+IYK,iShares U.S. Consumer Staples ETF,retail
+ENFR,Alerian Energy Infrastructure ETF,energy
+FAS,Direxion Daily Financial Bull 3X Shares,finance
+KIE,SPDR S&P Insurance ETF,finance
+KWEB,KraneShares CSI China Internet ETF,technology
+REM,iShares Mortgage Real Estate ETF,real-estate
+EEM,iShares MSCI Emerging Markets ETF,emerging-market
+VNQI,Vanguard Global ex-U.S. Real Estate ETF,real-estate
+TQQQ,ProShares UltraPro QQQ,high-beta
+MTUM,iShares MSCI USA Momentum Factor ETF,momentum
+UVXY,ProShares Ultra VIX Short-Term Futures ETF,volatility
+EFV,iShares MSCI EAFE Value ETF,value
+IVW,iShares S&P 500 Growth ETF,growth

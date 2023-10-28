@@ -1,5 +1,5 @@
 # optimal_mean_reversion_trading
-Implement thesis via python : https://arxiv.org/pdf/1411.5062.pdf 
+Implement thesis via python : [Optimal Mean Reversion Trading with Transaction Costs and Stop-Loss Exit](https://arxiv.org/abs/1411.5062)
 
 ### 1. Pair Trading using ou process
 

@@ -259,6 +259,7 @@ def find_d_star(x: np.float32,
     #             break
     #     return x
 
+"""
 if __name__ == "__main__":
     # Same example 
     GDX = pd.read_csv('data/GDX_historical.csv')
@@ -350,3 +351,67 @@ if __name__ == "__main__":
             label="G(d) * (V'(d) - 1) - (G'(d) * (V(d) - d -c)")
     plt.legend()
     plt.show()
+"""
+
+    
+    
+from math import sqrt, exp
+import scipy.integrate as si
+import scipy.optimize as so
+import numpy as np
+
+def Prime(f, x, theta, mu, sigma, r, h=1e-5):
+    # given f, estimates f'(x) using the difference quotient formula 
+    # WARNING: LOWER h VALUES CAN LEAD TO WEIRD RESULTS
+    return (f(x+h, theta, mu, sigma, r) - f(x, theta, mu, sigma, r)) / h 
+
+def Prime2(f, x, theta, mu, sigma, r, c, h=1e-5):
+    # given f, estimates f'(x) using the difference quotient formula 
+    # WARNING: LOWER h VALUES CAN LEAD TO WEIRD RESULTS
+    return (f(x+h, theta, mu, sigma, r, c) - f(x, theta, mu, sigma, r, c)) / h 
+
+def F(x, theta, mu, sigma, r):
+    # equation 3.3
+    def integrand(u):
+        return u**(r/mu - 1) * exp(sqrt(2*mu / sigma**2) * (x-theta)*u - u**2/2)
+    return si.quad(integrand, 0, np.inf)[0]
+
+def G(x, theta, mu, sigma, r):
+    # equation 3.4
+    def integrand(u):
+        return u**(r/mu - 1) * exp(sqrt(2*mu / sigma**2) * (theta-x)*u - u**2/2)
+    return si.quad(integrand, 0, np.inf)[0]
+
+def b_star(theta, mu, sigma, r, c):
+    # estimates b* using equation 4.3
+    # def opt_func(b):
+    #     # equation 4.3 in the paper with terms moved to one side
+    #     return abs(F(b, theta, mu, sigma, r) - (b-c)*Prime(F, b, theta, mu, sigma, r))
+    # bounds = ((.01, .99),)
+    # result = so.minimize(opt_func, .5, bounds=bounds)
+
+    b_space = np.linspace(0.1,0.9, 801)
+    def func(b):
+        return F(b, theta, mu, sigma, r) - (b-c)*Prime(F, b, theta, mu, sigma, r)
+    
+    return so.brentq(func, 0, 1)
+
+def V(x, theta, mu, sigma, r, c):
+    # OUR SELL SIGNAL
+    # equation 4.2, solution of equation posed by 2.3
+    
+    b_star_val = b_star(theta, mu, sigma, r, c)
+    
+    if x < b_star_val:
+        return (b_star_val - c) * F(x, theta, mu, sigma, r) / F(b_star_val, theta, mu, sigma, r)
+    else:
+        return x - c
+
+def d_star(theta, mu, sigma, r, c):
+    # estimates d* using equation 4.11
+  
+    def func(d):
+        return (G(d, theta, mu, sigma, r) * (Prime2(V, d, theta, mu, sigma, r, c) - 1)) - (Prime(G, d, theta, mu, sigma, r) * (V(d, theta, mu, sigma, r, c) - d - c))
+
+    # finds the root between the interval [0, 1]
+    return so.brentq(func, 0, 1)
